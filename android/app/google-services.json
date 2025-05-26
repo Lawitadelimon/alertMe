@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "2292329684",
+    "project_id": "alertme-a5605",
+    "storage_bucket": "alertme-a5605.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:2292329684:android:a8ab52f4c3c30f5eac5f41",
+        "android_client_info": {
+          "package_name": "com.example.alertme"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAQoQ1YbffRC0xs1Xt4aLDaJvnwn-EIRJw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
