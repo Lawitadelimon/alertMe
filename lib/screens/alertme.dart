@@ -1,4 +1,5 @@
 import 'package:alertme/screens/Register_screen.dart';
+import 'package:alertme/screens/home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../theme/app_theme.dart'; // Asegúrate que esta ruta esté bien según tu estructura
@@ -15,20 +16,28 @@ class _AlertMeState extends State<AlertMe> {
   final TextEditingController _passwordController = TextEditingController();
   String errorMessage = '';
 
-  Future<void> _login() async {
-    try {
-      await FirebaseAuth.instance.signInWithEmailAndPassword(
-        email: _emailController.text.trim(),
-        password: _passwordController.text.trim(),
-      );
-      // Aquí puedes navegar a otra pantalla
-      print('Inicio de sesión exitoso');
-    } on FirebaseAuthException catch (e) {
-      setState(() {
-        errorMessage = e.message ?? 'Error desconocido';
-      });
-    }
+ Future<void> _login() async {
+  try {
+    await FirebaseAuth.instance.signInWithEmailAndPassword(
+      email: _emailController.text.trim(),
+      password: _passwordController.text.trim(),
+    );
+
+    // Navegar al HomePage después de login exitoso
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (_) => HomePage(
+          userName: FirebaseAuth.instance.currentUser?.displayName ?? 'Usuario',
+        ),
+      ),
+    );
+  } on FirebaseAuthException catch (e) {
+    setState(() {
+      errorMessage = e.message ?? 'Error desconocido';
+    });
   }
+}
 
   @override
   Widget build(BuildContext context) {

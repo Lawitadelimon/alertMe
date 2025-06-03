@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
-import 'alertMe.dart'; // importa la pantalla de inicio de sesión
+import 'package:firebase_auth/firebase_auth.dart';
+
+import 'alertMe.dart'; // Login
+import 'home_page.dart'; // Página de inicio después del login
+
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
 
@@ -11,12 +15,29 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    Future.delayed(const Duration(seconds: 3), () {
+    _navigateUser();
+  }
+
+  Future<void> _navigateUser() async {
+    await Future.delayed(const Duration(seconds: 2)); // animación splash
+
+    final user = FirebaseAuth.instance.currentUser;
+
+    if (user != null) {
+      // Usuario autenticado → va a HomePage
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => const AlertMe()),
+        MaterialPageRoute(
+          builder: (_) => HomePage(userName: user.displayName ?? 'Usuario'),
+        ),
       );
-    });
+    } else {
+      // No autenticado → va a AlertMe (login)
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => const AlertMe()),
+      );
+    }
   }
 
   @override
