@@ -10,19 +10,23 @@ class PersonalInfoPage extends StatefulWidget {
 }
 
 class _PersonalInfoPageState extends State<PersonalInfoPage> {
+  final _formKey = GlobalKey<FormState>();
+
   final nombreController = TextEditingController();
   final alergiasController = TextEditingController();
   final direccion1Controller = TextEditingController();
-  final direccion2Controller = TextEditingController();
-  final sexoController = TextEditingController();
   final edadController = TextEditingController();
-  final contactoController = TextEditingController();
   final ubicacionController = TextEditingController();
 
   final List<String> tiposSangre = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
+  final List<String> opcionesSexo = ['H', 'M'];
+
   String? tipoSangreSeleccionado;
+  String? sexoSeleccionado;
 
   bool isLoading = true;
+
+  List<dynamic> contactosEmergencia = [];
 
   @override
   void initState() {
@@ -38,14 +42,13 @@ class _PersonalInfoPageState extends State<PersonalInfoPage> {
       if (data != null) {
         setState(() {
           nombreController.text = data['nombre'] ?? '';
-          tipoSangreSeleccionado = data['tipo_sangre'];
+          tipoSangreSeleccionado = tiposSangre.contains(data['tipo_sangre']) ? data['tipo_sangre'] : null;
           alergiasController.text = data['alergias'] ?? '';
           direccion1Controller.text = data['direccion1'] ?? '';
-          direccion2Controller.text = data['direccion2'] ?? '';
-          sexoController.text = data['sexo'] ?? '';
+          sexoSeleccionado = opcionesSexo.contains(data['sexo']) ? data['sexo'] : null;
           edadController.text = data['edad'] ?? '';
-          contactoController.text = data['contacto'] ?? '';
           ubicacionController.text = data['ubicacion'] ?? '';
+          contactosEmergencia = data['contactos_emergencia'] ?? [];
         });
       }
     }
@@ -59,10 +62,7 @@ class _PersonalInfoPageState extends State<PersonalInfoPage> {
     nombreController.dispose();
     alergiasController.dispose();
     direccion1Controller.dispose();
-    direccion2Controller.dispose();
-    sexoController.dispose();
     edadController.dispose();
-    contactoController.dispose();
     ubicacionController.dispose();
     super.dispose();
   }
@@ -83,72 +83,134 @@ class _PersonalInfoPageState extends State<PersonalInfoPage> {
           ? const Center(child: CircularProgressIndicator())
           : Padding(
               padding: const EdgeInsets.all(16),
-              child: Column(
-                children: [
-                  const Text(
-                    'Mis Datos Personales',
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                  ),
-                  const Divider(),
-                  Expanded(
-                    child: Container(
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        color: Colors.green[50],
-                        borderRadius: BorderRadius.circular(16),
-                        border: Border.all(color: Colors.green),
-                      ),
-                      child: SingleChildScrollView(
-                        child: Column(
-                          children: [
-                            _buildTextField('Nombre:', nombreController),
-                            const SizedBox(height: 10),
-                            DropdownButtonFormField<String>(
-                              value: tipoSangreSeleccionado,
-                              decoration: const InputDecoration(
-                                labelText: 'Tipo de sangre',
-                                border: OutlineInputBorder(),
-                                contentPadding: EdgeInsets.symmetric(horizontal: 12),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  children: [
+                    const Text(
+                      'Mis Datos Personales',
+                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    ),
+                    const Divider(),
+                    Expanded(
+                      child: Container(
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: Colors.green[50],
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(color: Colors.green),
+                        ),
+                        child: SingleChildScrollView(
+                          child: Column(
+                            children: [
+                              _buildTextField('Nombre *', nombreController),
+                              const SizedBox(height: 10),
+                              DropdownButtonFormField<String>(
+                                value: tiposSangre.contains(tipoSangreSeleccionado) ? tipoSangreSeleccionado : null,
+                                decoration: const InputDecoration(
+                                  labelText: 'Tipo de sangre *',
+                                  border: OutlineInputBorder(),
+                                ),
+                                validator: (value) => value == null ? 'Selecciona un tipo de sangre' : null,
+                                items: tiposSangre.map((tipo) {
+                                  return DropdownMenuItem(
+                                    value: tipo,
+                                    child: Text(tipo),
+                                  );
+                                }).toList(),
+                                onChanged: (value) {
+                                  setState(() {
+                                    tipoSangreSeleccionado = value;
+                                  });
+                                },
                               ),
-                              items: tiposSangre.map((tipo) {
-                                return DropdownMenuItem(
-                                  value: tipo,
-                                  child: Text(tipo),
-                                );
-                              }).toList(),
-                              onChanged: (value) {
-                                setState(() {
-                                  tipoSangreSeleccionado = value;
-                                });
-                              },
-                            ),
-                            const SizedBox(height: 10),
-                            _buildTextField('Alergias o enfermedades:', alergiasController),
-                            _buildTextField('Dirección:', direccion1Controller),
-                            Row(
-                              children: [
-                                Expanded(child: _buildTextField('Sexo:', sexoController)),
-                                const SizedBox(width: 16),
-                                Expanded(child: _buildTextField('Edad:', edadController)),
-                              ],
-                            ),
-                            _buildTextField('Dirección:', direccion2Controller),
-                            _buildTextField('Contacto:', contactoController),
-                            _buildTextField('Última ubicación:', ubicacionController),
-                            const SizedBox(height: 16),
-                            Align(
-                              alignment: Alignment.bottomRight,
-                              child: IconButton(
-                                onPressed: guardarDatosUsuario,
-                                icon: const Icon(Icons.check_circle, color: Colors.green, size: 36),
+                              const SizedBox(height: 10),
+                              _buildTextField('Alergias o enfermedades *', alergiasController),
+                              _buildTextField('Dirección *', direccion1Controller),
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: DropdownButtonFormField<String>(
+                                      value: opcionesSexo.contains(sexoSeleccionado) ? sexoSeleccionado : null,
+                                      decoration: const InputDecoration(
+                                        labelText: 'Sexo *',
+                                        border: OutlineInputBorder(),
+                                      ),
+                                      validator: (value) => value == null ? 'Selecciona sexo' : null,
+                                      items: opcionesSexo.map((sexo) {
+                                        return DropdownMenuItem(
+                                          value: sexo,
+                                          child: Text(sexo),
+                                        );
+                                      }).toList(),
+                                      onChanged: (value) {
+                                        setState(() {
+                                          sexoSeleccionado = value;
+                                        });
+                                      },
+                                    ),
+                                  ),
+                                  const SizedBox(width: 16),
+                                  Expanded(
+                                    child: _buildTextField('Edad *', edadController),
+                                  ),
+                                ],
                               ),
-                            )
-                          ],
+                              _buildTextField('Última ubicación', ubicacionController),
+                              const SizedBox(height: 16),
+
+                              /// CONTACTOS DE EMERGENCIA
+                              Align(
+                                alignment: Alignment.centerLeft,
+                                child: Text(
+                                  'Contactos de emergencia:',
+                                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              contactosEmergencia.isEmpty
+                                  ? const Text('No hay contactos de emergencia registrados.')
+                                  : Column(
+                                      children: contactosEmergencia.map<Widget>((contacto) {
+                                        return Container(
+                                          margin: const EdgeInsets.only(bottom: 8),
+                                          padding: const EdgeInsets.all(12),
+                                          decoration: BoxDecoration(
+                                            color: Colors.green[100],
+                                            borderRadius: BorderRadius.circular(8),
+                                            border: Border.all(color: Colors.green),
+                                          ),
+                                          child: Row(
+                                            children: [
+                                              const Icon(Icons.person, color: Colors.green),
+                                              const SizedBox(width: 10),
+                                              Expanded(
+                                                child: Text(
+                                                  '${contacto['nombre']} - ${contacto['telefono']}',
+                                                  style: const TextStyle(fontSize: 16),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        );
+                                      }).toList(),
+                                    ),
+
+                              const SizedBox(height: 16),
+                              Align(
+                                alignment: Alignment.bottomRight,
+                                child: IconButton(
+                                  onPressed: guardarDatosUsuario,
+                                  icon: const Icon(Icons.check_circle, color: Colors.green, size: 36),
+                                ),
+                              )
+                            ],
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
     );
@@ -157,18 +219,30 @@ class _PersonalInfoPageState extends State<PersonalInfoPage> {
   Widget _buildTextField(String label, TextEditingController controller) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8),
-      child: TextField(
+      child: TextFormField(
         controller: controller,
         decoration: InputDecoration(
           labelText: label,
           border: const OutlineInputBorder(),
-          contentPadding: const EdgeInsets.symmetric(horizontal: 12),
         ),
+        validator: (value) {
+          if (value == null || value.isEmpty) {
+            return 'Este campo es obligatorio';
+          }
+          return null;
+        },
       ),
     );
   }
 
   Future<void> guardarDatosUsuario() async {
+    if (!_formKey.currentState!.validate()) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Formulario incompleto. Revisa los campos obligatorios.')),
+      );
+      return;
+    }
+
     final uid = FirebaseAuth.instance.currentUser?.uid;
     if (uid != null) {
       await FirebaseFirestore.instance.collection('usuarios').doc(uid).set({
@@ -176,19 +250,31 @@ class _PersonalInfoPageState extends State<PersonalInfoPage> {
         'tipo_sangre': tipoSangreSeleccionado ?? '',
         'alergias': alergiasController.text,
         'direccion1': direccion1Controller.text,
-        'sexo': sexoController.text,
+        'sexo': sexoSeleccionado ?? '',
         'edad': edadController.text,
-        'direccion2': direccion2Controller.text,
-        'contacto': contactoController.text,
         'ubicacion': ubicacionController.text,
         'actualizado': FieldValue.serverTimestamp(),
       });
 
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Datos guardados correctamente')),
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text('¡Excelente!'),
+              content: const Text('Tus datos fueron guardados correctamente.'),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text('Aceptar'),
+                ),
+              ],
+            );
+          },
         );
-        Navigator.pop(context);
       }
     } else {
       ScaffoldMessenger.of(context).showSnackBar(

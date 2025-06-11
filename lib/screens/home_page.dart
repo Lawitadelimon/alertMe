@@ -1,3 +1,5 @@
+import 'package:alertme/screens/device_search_page.dart';
+import 'package:alertme/screens/emergency_contacts_page.dart';
 import 'package:alertme/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import '../theme/app_theme.dart'; 
@@ -70,13 +72,23 @@ class HomePage extends StatelessWidget {
 
             const SizedBox(height: 12),
             ElevatedButton.icon(
-              onPressed: () {},
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const EmergencyContactsPage()),
+                );
+              },
               icon: const Icon(Icons.emergency),
               label: const Text('Contactos de emergencia'),
             ),
             const SizedBox(height: 12),
             ElevatedButton.icon(
-              onPressed: () {},
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const DeviceSearchPage()),
+                );
+              },
               icon: const Icon(Icons.devices),
               label: const Text('Dispositivo'),
             ),
