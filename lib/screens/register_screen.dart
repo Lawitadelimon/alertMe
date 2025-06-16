@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import '../theme/app_theme.dart'; // Asegúrate de importar tu theme si necesitas
+// Asegúrate de importar tu theme si necesitas
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});

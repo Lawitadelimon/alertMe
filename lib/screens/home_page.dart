@@ -1,6 +1,5 @@
 import 'package:alertme/theme/app_theme.dart';
 import 'package:flutter/material.dart';
-import '../theme/app_theme.dart'; 
 import 'personal_info_page.dart';
 
 
