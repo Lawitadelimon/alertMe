@@ -16,7 +16,7 @@ class _AlertMeState extends State<AlertMe> {
   final TextEditingController _passwordController = TextEditingController();
   String errorMessage = '';
 
- Future<void> _login() async {
+Future<void> _login() async {
   try {
     await FirebaseAuth.instance.signInWithEmailAndPassword(
       email: _emailController.text.trim(),
@@ -28,7 +28,7 @@ class _AlertMeState extends State<AlertMe> {
       context,
       MaterialPageRoute(
         builder: (_) => HomePage(
-          userName: FirebaseAuth.instance.currentUser?.displayName ?? 'Usuario',
+          userName: FirebaseAuth.instance.currentUser?.displayName ?? 'Usuario', deviceType: 'phone',
         ),
       ),
     );

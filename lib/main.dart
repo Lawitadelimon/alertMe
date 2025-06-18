@@ -1,20 +1,24 @@
-import 'package:alertme/firebase_options.dart';
-import 'package:firebase_core/firebase_core.dart';
+import 'package:alertme/utils/device_type_helper.dart' as DeviceTypeHelper;
 import 'package:flutter/material.dart';
-import 'screens/splash_screen.dart'; // importa la splash screen
-import 'package:alertme/theme/app_theme.dart'; // importa el tema
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 
-Future<void> main() async {
+import 'theme/app_theme.dart';
+import 'screens/splash_screen.dart'; // splash genérico que decide según el tipo
+
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
-);
-  runApp(const MyApp());
+  );
 
+  final deviceType = await DeviceTypeHelper.detectDeviceType();
+  runApp(MyApp(deviceType: deviceType));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final String deviceType;
+  const MyApp({super.key, required this.deviceType});
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +26,7 @@ class MyApp extends StatelessWidget {
       title: 'AlertMe',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
-      home: const SplashScreen(), // aquí inicia
+      home: SplashScreen(deviceType: deviceType), // 👈 solo una splash
     );
   }
 }

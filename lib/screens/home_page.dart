@@ -1,14 +1,17 @@
+import 'package:alertme/screens/alertMe.dart';
 import 'package:alertme/screens/device_search_page.dart';
 import 'package:alertme/screens/emergency_contacts_page.dart';
 import 'package:alertme/theme/app_theme.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'personal_info_page.dart';
 
 
 class HomePage extends StatelessWidget {
   final String userName;
+  final String deviceType;
 
-  const HomePage({super.key, required this.userName});
+  const HomePage({super.key, required this.userName, required this.deviceType});
 
   @override
   Widget build(BuildContext context) {
@@ -49,6 +52,7 @@ class HomePage extends StatelessWidget {
                             Text('Oxigenación: Buena', style: AppTheme.labelText),
                           ],
                         ),
+                        
                       ],
                     ),
                     SizedBox(height: 12),
@@ -93,6 +97,18 @@ class HomePage extends StatelessWidget {
             ),
             
             const SizedBox(height: 30),
+            if (deviceType == 'phone')
+            ElevatedButton.icon(
+              onPressed: () async {
+              await FirebaseAuth.instance.signOut();
+              Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (_) => const AlertMe()),
+              );
+              },
+              icon: const Icon(Icons.logout),
+              label: const Text('Cerrar sesión'),
+              ),
             const Divider(),
             const Text(
               'Estado del dispositivo: ❌ Desconectado',
