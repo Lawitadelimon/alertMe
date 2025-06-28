@@ -1,3 +1,4 @@
+import 'package:alertme/watch/pinpage_wear.dart';
 import 'package:alertme/watch/wear_splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -42,7 +43,7 @@ class _SplashScreenState extends State<SplashScreen> {
     } else if (widget.deviceType == 'wear') {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (_) => const WearSplashScreen()),
+        MaterialPageRoute(builder: (_) => WatchHomePage()),
       );
     } else if (widget.deviceType == 'tv') {
       Navigator.pushReplacement(

@@ -1,6 +1,7 @@
 import 'package:alertme/screens/alertMe.dart';
 import 'package:alertme/screens/device_search_page.dart';
 import 'package:alertme/screens/emergency_contacts_page.dart';
+import 'package:alertme/screens/pinpage.dart';
 import 'package:alertme/theme/app_theme.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -89,11 +90,11 @@ class HomePage extends StatelessWidget {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const DeviceSearchPage()),
+                  MaterialPageRoute(builder: (context) => GeneratePinPage()),
                 );
               },
               icon: const Icon(Icons.devices),
-              label: const Text('Dispositivo'),
+              label: const Text('Generar PIN'),
             ),
             
             const SizedBox(height: 30),

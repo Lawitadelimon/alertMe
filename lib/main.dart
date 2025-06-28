@@ -4,8 +4,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 
 import 'theme/app_theme.dart';
-import 'screens/splash_screen.dart'; // splash genérico que decide según el tipo
-
+import 'screens/splash_screen.dart'; 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
@@ -26,7 +25,7 @@ class MyApp extends StatelessWidget {
       title: 'AlertMe',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
-      home: SplashScreen(deviceType: deviceType), // 👈 solo una splash
+      home: SplashScreen(deviceType: deviceType), 
     );
   }
 }
